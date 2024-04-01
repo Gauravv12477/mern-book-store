@@ -1,31 +1,14 @@
 const mongoose = require('mongoose');
 
-const uri = mongoose.connect("mongodb+srv://mern-book-store:Gaurav12345@cluster0.vcke2cd.mongodb.net/book-store")
+const connectDB = async () => {
+    try {
+        const connection = await mongoose.connect("mongodb+srv://mern-book-store:Gaurav12345@cluster0.vcke2cd.mongodb.net/book-store");
 
-const BookSchema = new mongoose.Schema({
-    authorName: {
-        type: String,
-        required: true,
-        maxLength: 100,
-    }, 
-    imageURL: {
-        type: String,
-    }, 
-    category: {
-        type: String,
+        console.log(`MongoDB Connected: ${connection.connection.host}`);
+    } catch (error) {
+        console.error(`Error connecting to MongoDB: ${error}`);
+        process.exit(1);
+    }
+};
 
-    }, 
-    bookDescription: String,
-    bookTitle: {
-        type: String,
-        required: true,
-        maxLength: 200
-    }, 
-    bookPDFURL: String, 
-})
-
-const booksData = mongoose.model('booksData', BookSchema);
-
-module.exports = {
-    booksData
-}
+module.exports = connectDB;
