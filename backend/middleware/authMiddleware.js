@@ -5,27 +5,27 @@ const { JWT_SECRET } = require('../config');
 
 const authMiddleware = asyncHandler(async (req, res, next) => {
     const authHeader = req.headers.authorization;
-    let token;
 
-    if(authHeader && authHeader.startsWith('Bearer ')){
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
         try {
-            token = authHeader.split(' ')[1];
             const decoded = jwt.verify(token, JWT_SECRET);
-            if (!decoded) {
-                throw new Error('Invalid token');
+            req.userId = decoded.userId; // Assuming the JWT payload contains the userId
+            const user = await User.findById(decoded.userId).select('-password');
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
             }
-            req.user = await User.findById(decoded.id).select('-password');
+            req.user = user;
+            next();
         } catch (error) {
-            res.status(401);
-            throw new Error('Not authorized, token failed');
+            console.error("Error in authMiddleware:", error);
+            res.status(401).json({ message: 'Not authorized, token failed' });
         }
     } else {
-        res.status(401);
-        throw new Error('Not authorized, no token provided');
+        res.status(401).json({ message: 'Not authorized, no token provided' });
     }
+});
 
-    next();  
-})
 
 
 const isAdmin = (req, res, next) => {

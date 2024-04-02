@@ -37,6 +37,12 @@ const registerUser = asyncHandler(async (req, res) => {
         password: req.body.password,
     })
     const userId = user._id;
+    
+    const token = jwt.sign({
+        userId
+    }, JWT_SECRET , {
+        expiresIn:'10m'
+    });
 
     if (user) {
         res.status(201)
@@ -45,11 +51,8 @@ const registerUser = asyncHandler(async (req, res) => {
             username: user.username,
             firstName: user.firstName,
             lastName: user.lastName,
-            token: jwt.sign(userId, JWT_SECRET, {
-                expiresIn: '10d'
+            token: token,
             })
-
-        })
     } else {
         res.status(400)
         throw new Error('Invalid User Data')
@@ -108,8 +111,8 @@ const loginUser = asyncHandler(async (req, res) => {
 //@access Private
 
 const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
-
+    const userId = req.userId;
+    const user = await User.findById(userId);
     if(user){
         res.json({
             userId: user._id,
@@ -118,10 +121,51 @@ const getUserProfile = asyncHandler(async (req, res) => {
             lastName: user.lastName,
             userRole: user.userRole
         })
+    } else {
+        res.status(404)
+            throw new Error("User not found !!")
+    }
+    res.send('success');
+})
+
+//@desc Update user profile 
+//@desc PUT /api/users
+//@access Private
+
+const updateUserProfile = asyncHandler( async (req, res) => {
+    const updatedUser = await User.findByIdAndUpdate(req.userId, req.body, {new: true})
+    if(!updatedUser){
+        return res.status(404).json({
+            message: "User not found"
+        })
+    }
+    res.json(updatedUser);
+})
+
+//@desc Delte User from DataBase.
+//desc DELETE /api/:id
+// access Admin
+
+const deleteUser = asyncHandler(async (req, res) => {
+    const userId = req.params.id;
+    const deleteUser = await User.findByIdAndDelete(userId);
+
+    if(!deleteUser) {
+        return res.status(404).json({
+            message: "User not found"
+        })
+    } else {    
+        res.json({
+            message: "successfully Delete!!"
+        })   
     }
 })
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getUserProfile,
+    updateUserProfile,
+    deleteUser
+    
 }

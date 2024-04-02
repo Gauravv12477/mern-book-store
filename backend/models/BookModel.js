@@ -18,7 +18,17 @@ const BookSchema = new mongoose.Schema({
         required: true,
         maxLength: 200
     }, 
-    bookPDFURL: String,         
+    bookPDFURL: String, 
+    price: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    rating: {
+        type: Number,
+        required: true,
+        default: 0
+    },        
 })
 
 const booksData = mongoose.model('booksData', BookSchema);
