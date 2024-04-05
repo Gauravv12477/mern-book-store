@@ -1,10 +1,10 @@
-const mongoose = requrie('mongoose');
+const mongoose = require('mongoose');
 
 const orderSchema = mongoose.Schema({
     user: {
-        type: mongoose.Schema.Types.objectId,
-        ref: 'User',
-        required,
+        type: mongoose.Schema.Types.ObjectId, 
+        required: true,
+        ref: 'User', 
     },
     orderItems: [
         {
@@ -25,12 +25,31 @@ const orderSchema = mongoose.Schema({
                 required: true,
             },
             product: {
-                type: mongoose.Schema.Types.objectId,
+                type: mongoose.Schema.Types.ObjectId, 
                 required: true,
-                ref: 'booksData'
+                ref: 'booksData' 
             }
         }
-    ]
-})
+    ],
+    shippingAddress: {
+        address:{
+            type: String,
+            required: true,
+        },
+        city: {
+            type: String, 
+            required: true
+        },
+        postalCode: {
+            type: String,
+            required: true,
+        },
+        country: {
+            type: String, 
+            required: true,
+        }
+    }
+}, { timestamps: true });
 
-const order = mongoose.model('Order', orderSchema);
+const Order = mongoose.model('Order', orderSchema); 
+module.exports = Order; 

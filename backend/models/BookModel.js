@@ -10,7 +10,7 @@ const BookSchema = new mongoose.Schema({
     }, 
     category: {
         type: String,
-        required: true,
+        required: true, 
     }, 
     bookDescription: String,
     bookTitle: {

@@ -12,7 +12,27 @@ const signinBody = z.object({
     password: z.string().min(6)
 })
 
+const uploadBookBody = z.object({
+    authorName: z.string(),
+    image: z.string().optional(),
+    category: z.string().max(15),
+    bookTitle: z.string().max(20),
+    bookPDFURL: z.string().optional,
+    price: z.number(),
+    rating: z.number(),   
+})
+
+
+const addOrderItemBody = z.object({
+    orderItems: z.string(),
+    shippingAddress: z.string(),
+        
+})
+
 module.exports = {
     signupBody,
-    signinBody
+    signinBody,
+    uploadBookBody,
+    addOrderItemBody
+
 }
