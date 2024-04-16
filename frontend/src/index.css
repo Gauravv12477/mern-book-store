@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+header, nav {
+    z-index: 1000 !important;
+}
+
+/* Custom scrollbar styles */
+/* For webkit-based browsers (Chrome, Safari) */
+/* Note: Customize as needed for other browsers */
+
+/* Hide the default scrollbar */
+::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+}
+
+/* Track (background of the scrollbar) */
+::-webkit-scrollbar-track {
+    background: transparent; /* Set a transparent background */
+}
+
+/* Handle (thumb of the scrollbar) */
+::-webkit-scrollbar-thumb {
+    background-color: #4d7cfe; /* Set the background color to Tailwind CSS blue-700 */
+    border-radius: 3px; /* Round the corners of the scrollbar thumb */
+    border: 2px solid transparent; /* Add a transparent border to the thumb */
+}
+
+/* On hover, change the color of the scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #4d7cfe; /* Change the background color on hover */
+}
+
+/* On active (click), change the color of the scrollbar thumb */
+::-webkit-scrollbar-thumb:active {
+    background-color: #4d7cfe; /* Change the background color on active/click */
+}

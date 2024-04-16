@@ -12,15 +12,16 @@ const signinBody = z.object({
     password: z.string().min(6)
 })
 
+// Define Zod schema for validating book upload data
 const uploadBookBody = z.object({
-    authorName: z.string(),
-    image: z.string().optional(),
-    category: z.string().max(15),
-    bookTitle: z.string().max(20),
-    bookPDFURL: z.string().optional,
-    price: z.number(),
-    rating: z.number(),   
-})
+    authorName: z.string(), // Required string
+    imageURL: z.string().optional(), // Optional string (may be undefined or null)
+    category: z.string().max(15), // Required string with max length of 15 characters
+    bookTitle: z.string().max(50), // Required string with max length of 50 characters
+    bookPDFURL: z.string().optional(), // Optional string (may be undefined or null)
+    price: z.number().optional(), // Optional number (may be undefined or null)
+    rating: z.number(), // Required number
+});
 
 
 const addOrderItemBody = z.object({

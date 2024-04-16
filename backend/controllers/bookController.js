@@ -1,8 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const { User } = require('../models/userModel');
-const { signupBody, signinBody, uploadBookBody } = require('../zodSchema/user');
+const { signupBody, signinBody,uploadBookBody } = require('../zodSchema/user');
 const { JWT_SECRET } = require('../config')
-const z = require('zod');
+const {z} = require('zod');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 const { booksData } = require('../models/BookModel');
@@ -27,41 +27,62 @@ const getAllBooks = asyncHandler(async (req, res) => {
 //@desc upload a book
 //@route POST /api/v1/book/upload-book
 
-const uploadBook = asyncHandler( async (req, res) => {
-    const {success, data} = uploadBookBody.safeParse(req.body);
-    //if check body got parseed safely  
-    if (!success) {
-        return res.status(400).json({ error: 'Invalid update data' });
-    }
-
-    if(data.userRole === 'user') {
-        return res.status(404).json({
-            message: "use are not Authorized!!"
-        })
-    }
+// Example usage of the uploadBookBody schema in a controller function
+const uploadBook = asyncHandler(async (req, res) => {
     try {
-        //creating a new book using BookSchema
-        const newBook = await booksData.create({
-            authorName: data.authorName,
-            imageURL: data.imageURL,
-            category: data.category,
-            bookDescription: data.bookDescription,
-            bookTitle: data.bookTitle,
-            bookPDFURL: data.bookPDFURL,
-            price: data.price,
-            rating: data.rating,
-        });
+        // Validate request body against the uploadBookBody schema
+        const { success, data } = uploadBookBody.safeParse(req.body);
+
+        if (!success) {
+            return res.status(400).json({ error: 'Invalid book data', details: data });
+        }
+
+        // Handle valid book data (data object contains validated properties)
+        console.log('Valid book data:', data);
+
+        // Example: Create a new book entry using validated data
+        const newBook = await booksData.create(data);
 
         res.status(201).json({
-            message: "new Book has been created !!"
+            message: 'New book has been created successfully',
+            data: newBook,
+        });
+    } catch (error) {
+        console.error('Error uploading book:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+module.exports = uploadBook;
+
+//@desc Get a single Book 
+//@route GET /api/v1/book/:id
+//@access Public
+
+
+const getSingleBook = asyncHandler(async (req, res) => {
+    try{
+        const params = req.params.id;
+        const singleBook = await booksData.findById(params);
+
+        if(!singleBook) {
+            res.status(400).json({
+                message: "Book not found!!"
+            })
+        }
+
+        return res.status(200).json({
+            book: singleBook
         })
 
-    } catch (err) {
+    } catch(err) {
         return res.status(500).json({
-            message: "something went wrong!!"
-        })
+            message: "something went wrong !!"
+        }) 
     }
 })
+
+
 
 //@desc update a book 
 //@route PATCH /api/v1/book/:id 
@@ -122,11 +143,12 @@ const findByCategory = asyncHandler(async (req, res) => {
     })
 })
 
-//@desc     
+//@desc  
 
 module.exports = {
     getAllBooks,
     uploadBook,
     updateBook,
     findByCategory,
+    getSingleBook
 }
